@@ -1,0 +1,8 @@
+[package]
+name = "rehype-tree-sitter-highlight"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+tree-sitter = "0.25"
+thiserror = "2.0.16"

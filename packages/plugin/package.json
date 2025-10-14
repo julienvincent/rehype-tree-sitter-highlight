@@ -1,0 +1,30 @@
+{
+  "name": "@julienvincent/rehype-tree-sitter-highlight",
+  "description": "A rehype plugin to provide syntax highlighting using Tree-Sitter",
+  "author": "Julien Vincent <m@julienvincent.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julienvincent/rehype-tree-sitter.git"
+  },
+  "keywords": [
+    "tree-sitter",
+    "rehype",
+    "highlight"
+  ],
+  "type": "module",
+  "exports": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@julienvincent/tree-sitter-highlight": "workspace:*",
+    "hast": "^1.0.0",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/hast": "^3.0.4",
+    "rehype": "^13.0.2"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@julienvincent/tree-sitter-highlight",
+  "version": "1.0.0",
+  "types": "src/index.d.ts",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "engines": {
+    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
+  },
+  "optionalDependencies": {
+    "@julienvincent/tree-sitter-highlight-darwin-x64": "workspace:*",
+    "@julienvincent/tree-sitter-highlight-linux-x64-gnu": "workspace:*",
+    "@julienvincent/tree-sitter-highlight-linux-arm64-gnu": "workspace:*",
+    "@julienvincent/tree-sitter-highlight-darwin-arm64": "workspace:*"
+  }
+}

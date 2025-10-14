@@ -1,0 +1,8 @@
+target
+dist
+node_modules
+fixtures
+
+*.node
+
+tsconfig.tsbuildinfo

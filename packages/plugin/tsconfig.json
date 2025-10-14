@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "../plugin/dist",
+    "declarationDir": "../plugin/dist",
+    "rootDir": "../plugin/src",
+    "target": "es2024",
+    "lib": [
+      "ES2024"
+    ],
+    "module": "nodenext",
+    "skipLibCheck": true,
+    "composite": true,
+    "moduleResolution": "nodenext",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "../plugin/src"
+  ]
+}

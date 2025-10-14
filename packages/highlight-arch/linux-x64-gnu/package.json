@@ -1,0 +1,22 @@
+{
+  "name": "@julienvincent/tree-sitter-highlight-linux-x64-gnu",
+  "version": "1.0.0",
+  "cpu": [
+    "x64"
+  ],
+  "type": "module",
+  "exports": "./index.node",
+  "files": [
+    "index.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
+  },
+  "os": [
+    "linux"
+  ],
+  "libc": [
+    "glibc"
+  ]
+}
