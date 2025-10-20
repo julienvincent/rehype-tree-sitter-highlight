@@ -17,6 +17,7 @@ test("highlights javascript code", () => {
   <pre>
     <code class="language-javascript">
       function sum(a, b) {
+        console.log("this is a string");
         return a + b;
       }
     </code>
@@ -27,9 +28,37 @@ test("highlights javascript code", () => {
   const processor = rehype()
     .use(rehypeTreeSitter, {
       grammar_paths: [path.join(__dirname, "../../../fixtures/grammars/")],
-      query_paths: [
-        path.join(__dirname, "../../../fixtures/nvim-treesitter/queries/"),
-      ],
+    })
+    .freeze();
+
+  const output = processor.processSync(html).value;
+  expect(output).matchSnapshot();
+});
+
+test("highlights markdown code with injections", () => {
+  const html = `
+<html>
+<head></head>
+<body>
+  <pre>
+    <code class="language-markdown">
+      ## This is a title
+
+      This is some text. Some text with \`a code block\`
+
+      \`\`\`javascript
+      console.log("And this is some javascript")
+      \`\`\`
+
+      Some more text
+    </code>
+  </pre>
+</body>
+</html>`;
+
+  const processor = rehype()
+    .use(rehypeTreeSitter, {
+      grammar_paths: [path.join(__dirname, "../../../fixtures/grammars/")],
     })
     .freeze();
 

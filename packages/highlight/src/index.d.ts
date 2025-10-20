@@ -22,17 +22,13 @@ export type HighlightEvent =
       range: HighlightRange;
     };
 
-export type HighlightParams = {
-  source: string;
-  language: string;
-  query_paths?: string[];
-  grammar_paths?: string[];
-};
-
-export function highlight(params: HighlightParams): HighlightEvent[];
+export class Highlighter {
+  constructor(grammar_paths: string[], query_paths?: string[]);
+  highlight(source: String, language: String): HighlightEvent[];
+}
 
 declare const tree_sitter_highlight: {
-  highlight: typeof highlight;
+  Highlighter: typeof Highlighter;
   HighlightEventType: typeof HighlightEventType;
 };
 

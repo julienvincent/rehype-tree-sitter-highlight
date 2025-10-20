@@ -3,11 +3,27 @@
 exports[`highlights javascript code 1`] = `
 "<html><head></head>
 <body>
-  <pre>    <code class="language-javascript">
-      <span class="keyword">function</span> <span class="function">sum</span><span class="punctuation.bracket">(</span><span class="variable.parameter">a</span><span class="punctuation.delimiter">,</span> <span class="variable.parameter">b</span><span class="punctuation.bracket">)</span> <span class="punctuation.bracket">{</span>
-        <span class="keyword">return</span> <span class="variable">a</span> <span class="operator">+</span> <span class="variable">b</span><span class="punctuation.delimiter">;</span>
-      <span class="punctuation.bracket">}</span>
-    </code>
+  <pre>    <code class="language-javascript"><span class="keyword">function</span><span> </span><span class="function">sum</span><span class="punctuation.bracket">(</span><span class="variable.parameter">a</span><span class="punctuation.delimiter">,</span><span> </span><span class="variable.parameter">b</span><span class="punctuation.bracket">)</span><span> </span><span class="punctuation.bracket">{</span><span>
+  </span><span class="variable.builtin">console</span><span class="punctuation.delimiter">.</span><span class="function.method">log</span><span class="punctuation.bracket">(</span><span class="string">"this is a string"</span><span class="punctuation.bracket">)</span><span class="punctuation.delimiter">;</span><span>
+  </span><span class="keyword">return</span><span> </span><span class="variable">a</span><span> </span><span class="operator">+</span><span> </span><span class="variable">b</span><span class="punctuation.delimiter">;</span><span>
+</span><span class="punctuation.bracket">}</span></code>
+  </pre>
+
+</body></html>"
+`;
+
+exports[`highlights markdown code with injections 1`] = `
+"<html><head></head>
+<body>
+  <pre>    <code class="language-markdown"><span class="punctuation.special">##</span><span> </span><span class="text.title">This is a title</span><span>
+
+This is some text. Some text with </span><span class="punctuation.delimiter">\`</span><span class="text.literal">a code block</span><span class="punctuation.delimiter">\`</span><span>
+
+</span><span class="punctuation.delimiter">\`\`\`</span><span class="text.literal">javascript
+</span><span class="variable.builtin">console</span><span class="punctuation.delimiter">.</span><span class="function.method">log</span><span class="punctuation.bracket">(</span><span class="string">"And this is some javascript"</span><span class="punctuation.bracket">)</span><span>
+</span><span class="punctuation.special"></span><span class="punctuation.delimiter">\`\`\`</span><span class="text.literal">
+</span><span>
+Some more tex</span></code>
   </pre>
 
 </body></html>"

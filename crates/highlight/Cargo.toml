@@ -5,4 +5,7 @@ edition = "2024"
 
 [dependencies]
 tree-sitter = "0.25"
+tree-sitter-loader = "0.25"
+
 thiserror = "2.0.16"
+anyhow = "1.0.100"

@@ -9,10 +9,9 @@ pub struct LoadedGrammar {
   pub lang: Language,
   pub injections: Vec<PathBuf>,
   pub highlights: Vec<PathBuf>,
-  pub locals: Vec<PathBuf>,
 }
 
-type Grammars = HashMap<String, LoadedGrammar>;
+pub type Grammars = HashMap<String, LoadedGrammar>;
 
 pub fn load_grammars(search_paths: &[PathBuf]) -> Result<Grammars> {
   let mut loader = Loader::new()?;
@@ -59,14 +58,6 @@ pub fn load_grammars(search_paths: &[PathBuf]) -> Result<Grammars> {
       .map(|path| config.root_path.join(path))
       .collect::<Vec<_>>();
 
-    let locals = config
-      .locals_filenames
-      .clone()
-      .unwrap_or_default()
-      .iter()
-      .map(|path| config.root_path.join(path))
-      .collect::<Vec<_>>();
-
     languages.insert(
       config.language_name.clone(),
       LoadedGrammar {
@@ -74,7 +65,6 @@ pub fn load_grammars(search_paths: &[PathBuf]) -> Result<Grammars> {
         lang: language,
         injections,
         highlights,
-        locals,
       },
     );
   }

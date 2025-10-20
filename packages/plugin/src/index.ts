@@ -43,7 +43,67 @@ function parseMeta(meta?: any): Record<string, string | boolean> {
   );
 }
 
+function resetContentOffset(content: string): [string, number] {
+  const lines = content.split("\n");
+  if (lines.length === 0) {
+    return ["", 0];
+  }
+
+  while (lines[0].trim() === "") {
+    lines.shift();
+  }
+  while (lines[lines.length - 1].trim() === "") {
+    lines.pop();
+  }
+
+  if (lines.length === 0) {
+    return ["", 0];
+  }
+
+  const [first] = lines;
+  const index = first.search(/\S/);
+
+  if (index === 0) {
+    return [lines.join("\n"), 0];
+  }
+
+  const trimmed = lines
+    .map((line) => {
+      const offset_total = line.search(/\S/);
+      if (offset_total > index) {
+        return line.substring(index);
+      }
+      return line.substring(offset_total);
+    })
+    .join("\n");
+
+  return [trimmed, index];
+}
+
+function highlightsSinceReset(stack: string[]) {
+  const highlights: string[] = [];
+
+  const reversed = Array.from(stack);
+  reversed.reverse();
+  for (const highlight of reversed) {
+    if (highlight === "none") {
+      return highlights;
+    }
+
+    highlights.unshift(highlight);
+  }
+
+  return Array.from(new Set(highlights));
+}
+
 export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
+  const grammar_paths = options?.grammar_paths || [];
+  const default_query_paths = Array.from(options?.query_paths || []);
+  const highlighter = new highlight.Highlighter(
+    grammar_paths,
+    default_query_paths,
+  );
+
   return function transformer(tree: Element) {
     visit(
       tree,
@@ -66,8 +126,7 @@ export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
           return;
         }
 
-        const query_paths = Array.from(options?.query_paths || []);
-
+        const query_paths = [];
         const meta = parseMeta((node.data as any)?.meta);
         if (meta.query && typeof meta.query === "string") {
           const query_path = options?.resolveQueryPath?.(meta.query);
@@ -87,18 +146,19 @@ export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
           }
         }
 
-        let events;
-        try {
-          events = highlight.highlight({
-            language: lang,
-            source: child.value,
-            query_paths,
-            grammar_paths: options?.grammar_paths || [],
-          });
-        } catch (e) {
-          console.error("Failed to highlight", e);
-          return;
+        const [source] = resetContentOffset(child.value);
+
+        // This is not the best way to do this. Ideally there is a way to
+        // specify temporary queries that are loaded for a single call to
+        // highlight without needing to recreate the entire highlighter.
+        let local_highlighter = highlighter;
+        if (query_paths.length > 0) {
+          local_highlighter = new highlight.Highlighter(
+            grammar_paths,
+            default_query_paths.concat(query_paths),
+          );
         }
+        const events = local_highlighter.highlight(source, lang);
 
         const children: ElementContent[] = [];
         const highlights_stack: string[] = [];
@@ -117,17 +177,18 @@ export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
             }
 
             case highlight.HighlightEventType.Source: {
-              const subtext = child.value.substring(
+              const subtext = source.substring(
                 event.range.start,
                 event.range.end,
               );
 
-              if (highlights_stack.length > 0) {
+              const stack = highlightsSinceReset(highlights_stack);
+              if (stack.length > 0) {
                 children.push({
                   type: "element",
                   tagName: "span",
                   properties: {
-                    className: Array.from(highlights_stack),
+                    className: stack.pop(),
                   },
                   children: [
                     {
@@ -138,8 +199,15 @@ export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
                 });
               } else {
                 children.push({
-                  type: "text",
-                  value: subtext,
+                  type: "element",
+                  tagName: "span",
+                  properties: {},
+                  children: [
+                    {
+                      type: "text",
+                      value: subtext,
+                    },
+                  ],
                 });
               }
 
