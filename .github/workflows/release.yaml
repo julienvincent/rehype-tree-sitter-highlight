@@ -12,13 +12,16 @@ jobs:
   build:
     strategy:
       matrix:
+        # We need to run on ubuntu-22.04 for linux builds as it uses glibc
+        # 2.35. Current latest NodeJS containers do not support 2.39 (glibc
+        # version of ubuntu-24.04).
         include:
         - arch: linux-amd64
           target: aarch64-unknown-linux-gnu
-          runs-on: ubuntu-24.04-arm
+          runs-on: ubuntu-22.04-arm
         - arch: linux-arm64
           target: x86_64-unknown-linux-gnu
-          runs-on: ubuntu-24.04
+          runs-on: ubuntu-22.04
         - arch: macos-amd64
           target: x86_64-apple-darwin
           runs-on: macos-15-intel
