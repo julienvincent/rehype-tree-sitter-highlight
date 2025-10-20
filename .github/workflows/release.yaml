@@ -14,12 +14,16 @@ jobs:
       matrix:
         include:
         - arch: linux-amd64
+          target: aarch64-unknown-linux-gnu
           runs-on: ubuntu-24.04-arm
         - arch: linux-arm64
+          target: x86_64-unknown-linux-gnu
           runs-on: ubuntu-24.04
         - arch: macos-amd64
+          target: x86_64-apple-darwin
           runs-on: macos-15-intel
         - arch: macos-arm64
+          target: aarch64-apple-darwin
           runs-on: macos-15
     runs-on: ${{ matrix.runs-on }}
     steps:
@@ -32,11 +36,11 @@ jobs:
       
       - name: Build
         run: |
-          just build-and-copy-lib
+          just build-and-copy-lib release ${{ matrix.target }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: highlight-${{ matrix.arch }}
+          name: highlight-${{ matrix.target }}
           if-no-files-found: error
           path: ./**/*/index.node
 

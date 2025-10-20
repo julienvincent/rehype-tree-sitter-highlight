@@ -1,34 +1,36 @@
 platform := `uname -s | tr '[:upper:]' '[:lower:]'`
-arch := `uname -m`
-target := if platform == "darwin" { if arch == "arm64" { "aarch64-apple-darwin" } else { "x86_64-apple-darwin" } } else if platform == "linux" { if arch == "aarch64" { "aarch64-unknown-linux-gnu" } else { "x86_64-unknown-linux-gnu" } } else { "unknown" }
-pkg_dir := "packages/highlight-arch"
+default_target := `rustc -vV | sed -n 's/^host: //p'`
 
-build-lib profile="release":
-    cargo build --profile {{ profile }}
+build-lib profile="release" target=(default_target):
+    cargo build --profile {{ profile }} --target {{ target }}
 
-build-and-copy-lib profile="release": (build-lib profile)
-    if [ "{{ profile }}" = "release" ]; then \
-      profile="release"; \
-    else \
-      profile="debug"; \
-    fi; \
-    if [ "{{ platform }}" = "darwin" ]; then \
-        libfile="target/$profile/libhighlight.dylib"; \
-        dest="{{ pkg_dir }}/darwin-{{ arch }}/index.node"; \
-    elif [ "{{ platform }}" = "linux" ]; then \
-        if [ "{{ arch }}" = "aarch64" ]; then \
-            libfile="target/$profile/libhighlight.so"; \
-            dest="{{ pkg_dir }}/linux-arm64-gnu/index.node"; \
-        else \
-            libfile="target/$profile/libhighlight.so"; \
-            dest="{{ pkg_dir }}/linux-x64-gnu/index.node"; \
-        fi; \
-    elif [[ "{{ platform }}" =~ "mingw" ]] || [[ "{{ platform }}" =~ "msys" ]]; then \
-        libfile="target/$profile/highlight.dll"; \
-        dest="{{ pkg_dir }}/windows-x64/index.node"; \
-    fi; \
-    mkdir -p "$(dirname "$dest")"; \
-    cp "$libfile" "$dest"
+build-and-copy-lib profile="release" target=(default_target): (build-lib profile target)
+    #!/bin/bash
+    profile="{{ profile }}";
+    if [ "{{ profile }}" = "dev" ]; then
+      profile="debug";
+    fi;
+
+    if [ "{{ target }}" = "aarch64-apple-darwin" ]; then
+        ext="dylib";
+        dest="darwin-arm64";
+    elif [ "{{ target }}" = "x86_64-apple-darwin" ]; then
+        ext="dylib";
+        dest="darwin-x64";
+    elif [ "{{ target }}" = "aarch64-unknown-linux-gnu" ]; then
+        ext="so";
+        dest="linux-arm64-gnu";
+    elif [ "{{ target }}" = "x86_64-unknown-linux-gnu" ]; then
+        ext="so";
+        dest="linux-x64-gnu";
+    fi;
+
+    if [ "${dest}" = "" ]; then
+      echo "Unknown target {{ target }}"
+      exit 1
+    fi;
+
+    cp target/{{ target }}/$profile/libhighlight.$ext packages/highlight-arch/$dest/index.node
 
 build: build-and-copy-lib
     pnpm run -r build
