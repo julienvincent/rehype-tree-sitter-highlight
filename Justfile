@@ -3,11 +3,10 @@ arch := `uname -m`
 target := if platform == "darwin" { if arch == "arm64" { "aarch64-apple-darwin" } else { "x86_64-apple-darwin" } } else if platform == "linux" { if arch == "aarch64" { "aarch64-unknown-linux-gnu" } else { "x86_64-unknown-linux-gnu" } } else { "unknown" }
 pkg_dir := "packages/highlight-arch"
 
-build profile="release":
-    cargo build --profile {{profile}}
-    pnpm run -r build
+build-lib profile="release":
+    cargo build --profile {{ profile }}
 
-build-and-copy profile="release": (build profile)
+build-and-copy-lib profile="release": (build-lib profile)
     if [ "{{ profile }}" = "release" ]; then \
       profile="release"; \
     else \
@@ -31,6 +30,9 @@ build-and-copy profile="release": (build profile)
     mkdir -p "$(dirname "$dest")"; \
     cp "$libfile" "$dest"
 
+build: build-and-copy-lib
+    pnpm run -r build
+
 download-test-fixtures:
     #!/bin/sh
     rm -rf fixtures
@@ -51,3 +53,4 @@ download-test-fixtures:
 
 test:
     pnpm run -r test
+    cargo test -p rehype-tree-sitter-highlight

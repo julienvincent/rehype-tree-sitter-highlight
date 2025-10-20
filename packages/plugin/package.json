@@ -12,8 +12,12 @@
     "rehype",
     "highlight"
   ],
+  "version": "1.0.0",
   "type": "module",
   "exports": "./dist/index.js",
+  "files": [
+    "./dist/**"
+  ],
   "scripts": {
     "build": "tsc -b",
     "test": "vitest"

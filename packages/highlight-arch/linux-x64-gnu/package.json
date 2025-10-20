@@ -1,5 +1,5 @@
 {
-  "name": "@julienvincent/tree-sitter-highlight-linux-x64-gnu",
+  "name": "@julienvincent/tree-sitter-highlight-linux-x64",
   "version": "1.0.0",
   "cpu": [
     "x64"

@@ -500,13 +500,10 @@ dependencies = [
 name = "rehype-tree-sitter-nodelib"
 version = "1.0.0"
 dependencies = [
- "anyhow",
  "napi",
  "napi-build",
  "napi-derive",
  "rehype-tree-sitter-highlight",
- "tree-sitter",
- "tree-sitter-loader",
 ]
 
 [[package]]

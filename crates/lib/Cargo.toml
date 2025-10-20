@@ -8,14 +8,10 @@ crate-type = ["cdylib"]
 name = "highlight"
 
 [dependencies]
-anyhow = "1.0.100"
 napi = "3.0.0"
 napi-derive = "3.0.0"
 
 rehype-tree-sitter-highlight = { path = "../highlight/" }
-
-tree-sitter = "0.25"
-tree-sitter-loader = "0.25.10"
 
 [build-dependencies]
 napi-build = "2"
