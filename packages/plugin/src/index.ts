@@ -63,6 +63,8 @@ function resetContentOffset(content: string): [string, number] {
   const [first] = lines;
   const index = first.search(/\S/);
 
+  lines.push("");
+
   if (index === 0) {
     return [lines.join("\n"), 0];
   }
@@ -212,6 +214,28 @@ export default function rehypeCodeTreeSitter(options?: HighlighterOptions) {
               }
 
               break;
+            }
+          }
+        }
+
+        // Trim off any trailing newline nodes
+        if (children.length > 0) {
+          const last = children[children.length - 1];
+          switch (last.type) {
+            case "text": {
+              if (last.value === "\n") {
+                children.pop();
+              }
+              break;
+            }
+            case "element": {
+              if (
+                last.children[0]?.type === "text" &&
+                last.children[0].value === "\n"
+              ) {
+                children.pop();
+                break;
+              }
             }
           }
         }
