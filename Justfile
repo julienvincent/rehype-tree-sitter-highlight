@@ -37,7 +37,8 @@ build: build-and-copy-lib
 
 download-test-fixtures:
     #!/bin/sh
-    rm -rf fixtures
+    rm -rf fixtures/grammars
+    rm -rf fixtures/nvim-treesitter
     mkdir -p fixtures
 
     git clone --no-checkout --depth=1 --filter=tree:0 https://github.com/nvim-treesitter/nvim-treesitter fixtures/nvim-treesitter

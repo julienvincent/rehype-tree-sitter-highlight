@@ -2,6 +2,8 @@ use anyhow::Result;
 use std::{collections::HashMap, ops::Deref};
 use tree_sitter::{Language, Parser, Query, QueryCursor, QueryProperty, Range, StreamingIterator};
 
+use crate::ranges::{self, remap_range_for_appended_newline};
+
 #[derive(Debug, Clone)]
 pub struct HighlightRegion {
   pub range: Range,
@@ -28,13 +30,15 @@ pub fn query_highlights(
   source: &[u8],
   query: &Query,
 ) -> Result<Vec<HighlightRegion>> {
+  let (source_with_newline, original_endpoint) = ranges::with_newline(source);
+
   parser.set_language(lang)?;
   let tree = parser
-    .parse(source, None)
+    .parse(&source_with_newline, None)
     .ok_or_else(|| anyhow::anyhow!("Parse returned None"))?;
 
   let mut cursor = QueryCursor::new();
-  let mut matches = cursor.matches(query, tree.root_node(), source);
+  let mut matches = cursor.matches(query, tree.root_node(), source_with_newline.as_ref());
 
   let capture_index = query
     .capture_names()
@@ -71,7 +75,7 @@ pub fn query_highlights(
             if !value.starts_with("_") {
               highlights.push(HighlightRegion {
                 highlight: value.to_string(),
-                range: capture.node.range(),
+                range: remap_range_for_appended_newline(capture.node.range(), &original_endpoint),
                 pattern_index: query_match.pattern_index as u32,
                 priority,
               });

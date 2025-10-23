@@ -1,12 +1,13 @@
 use anyhow::Result;
 use grammar::Grammars;
 use std::{collections::HashMap, path::PathBuf};
-use tree_sitter::{Language, Parser, Point, Query, Range};
+use tree_sitter::{Language, Parser, Query};
 
 pub mod grammar;
 mod highlights;
 mod injections;
 pub mod queries;
+mod ranges;
 
 use crate::highlights::HighlightRegion;
 
@@ -76,9 +77,11 @@ fn query_highlights<'a>(
   };
 
   let injections =
-    injections::query_injections(parser, &config.language, source, &config.injections).unwrap();
+    injections::query_injections(parser, &config.language, source, &config.injections)
+      .expect("Failed to query injections");
   let mut highlights =
-    highlights::query_highlights(parser, &config.language, source, &config.highlights).unwrap();
+    highlights::query_highlights(parser, &config.language, source, &config.highlights)
+      .expect("Failed to query highlights");
 
   for region in injections {
     let injection_highlights = query_highlights(
@@ -93,18 +96,7 @@ fn query_highlights<'a>(
       highlight: highlight.highlight.clone(),
       priority: highlight.priority,
       pattern_index: layer * highlight.pattern_index,
-      range: Range {
-        start_byte: region.range.start_byte + highlight.range.start_byte,
-        end_byte: region.range.start_byte + highlight.range.end_byte,
-        start_point: Point {
-          row: region.range.start_point.row + highlight.range.start_point.row,
-          column: region.range.start_point.column + highlight.range.start_point.column,
-        },
-        end_point: Point {
-          row: region.range.end_point.row + highlight.range.end_point.row,
-          column: region.range.end_point.column + highlight.range.end_point.column,
-        },
-      },
+      range: ranges::remap_injected_region_highlight_range(&region.range, &highlight.range),
     })
     .collect::<Vec<_>>();
 
@@ -116,7 +108,7 @@ fn query_highlights<'a>(
   highlights
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HighlightEvent {
   Highlight(String),
   Source { start: usize, end: usize },

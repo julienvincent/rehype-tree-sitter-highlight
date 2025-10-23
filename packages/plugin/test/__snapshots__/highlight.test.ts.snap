@@ -1,5 +1,20 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`highlights clojure code with markdown injections 1`] = `
+"<html><head></head>
+<body>
+  <pre>    <code class="language-clojure"><span class="punctuation.bracket">(</span><span class="keyword.function">defn</span><span> </span><span class="function">some-function</span><span> 
+  </span><span class="string">"</span><span class="punctuation.special">##</span><span class="string"> </span><span class="text.title">This is markdown</span><span class="string">
+       
+</span><span class="punctuation.delimiter">   \`\`\`</span><span class="text.literal">clojure
+</span><span>   </span><span class="punctuation.bracket">(</span><span class="function.builtin">println</span><span> </span><span class="number">1</span><span class="punctuation.bracket">)</span><span>
+</span><span class="punctuation.delimiter">   \`\`\`</span><span class="string">"</span><span>
+  </span><span class="punctuation.bracket">[</span><span class="punctuation.bracket">]</span><span class="punctuation.bracket">)</span></code>
+  </pre>
+
+</body></html>"
+`;
+
 exports[`highlights javascript code 1`] = `
 "<html><head></head>
 <body>
@@ -23,7 +38,20 @@ This is some text. Some text with </span><span class="punctuation.delimiter">\`<
 </span><span class="variable.builtin">console</span><span class="punctuation.delimiter">.</span><span class="function.method">log</span><span class="punctuation.bracket">(</span><span class="string">"And this is some javascript"</span><span class="punctuation.bracket">)</span><span>
 </span><span class="punctuation.special"></span><span class="punctuation.delimiter">\`\`\`</span><span class="text.literal">
 </span><span>
-Some more tex</span></code>
+Some more text</span></code>
+  </pre>
+
+</body></html>"
+`;
+
+exports[`highlights markdown code with no trailing text 1`] = `
+"<html><head></head>
+<body>
+  <pre>    <code class="language-markdown"><span class="punctuation.special">##</span><span> </span><span class="text.title">This is markdown</span><span>
+      
+</span><span class="punctuation.delimiter">\`\`\`</span><span class="text.literal">clojure
+</span><span>(println 1)
+</span><span class="punctuation.special"></span><span class="punctuation.delimiter">\`\`\`</span></code>
   </pre>
 
 </body></html>"

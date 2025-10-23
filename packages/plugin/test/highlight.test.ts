@@ -65,3 +65,60 @@ test("highlights markdown code with injections", () => {
   const output = processor.processSync(html).value;
   expect(output).matchSnapshot();
 });
+
+test("highlights clojure code with markdown injections", () => {
+  const html = `
+<html>
+<head></head>
+<body>
+  <pre>
+    <code class="language-clojure">
+      (defn some-function 
+        "## This is markdown
+       
+         \`\`\`clojure
+         (println 1)
+         \`\`\`"
+        [])
+    </code>
+  </pre>
+</body>
+</html>`;
+
+  const processor = rehype()
+    .use(rehypeTreeSitter, {
+      grammar_paths: [path.join(__dirname, "../../../fixtures/grammars/")],
+      query_paths: [path.join(__dirname, "../../../fixtures/queries/")],
+    })
+    .freeze();
+
+  const output = processor.processSync(html).value;
+  expect(output).matchSnapshot();
+});
+
+test("highlights markdown code with no trailing text", () => {
+  const html = `
+<html>
+<head></head>
+<body>
+  <pre>
+    <code class="language-markdown">
+      ## This is markdown
+      
+      \`\`\`clojure
+      (println 1)
+      \`\`\`
+    </code>
+  </pre>
+</body>
+</html>`;
+
+  const processor = rehype()
+    .use(rehypeTreeSitter, {
+      grammar_paths: [path.join(__dirname, "../../../fixtures/grammars/")],
+    })
+    .freeze();
+
+  const output = processor.processSync(html).value;
+  expect(output).matchSnapshot();
+});

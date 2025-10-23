@@ -5,6 +5,8 @@ use tree_sitter::{
   Range, StreamingIterator,
 };
 
+use crate::ranges;
+
 pub fn get_lang_name(properties: &[QueryProperty]) -> Option<String> {
   for property in properties {
     if property.key.deref() == "injection.language" {
@@ -14,7 +16,7 @@ pub fn get_lang_name(properties: &[QueryProperty]) -> Option<String> {
   None
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct RangeOffset {
   start_row: isize,
   start_col: isize,
@@ -123,17 +125,18 @@ pub fn query_injections(
   source: &[u8],
   query: &Query,
 ) -> Result<Vec<InjectedRegion>> {
-  let source_str = String::from_utf8(Vec::from(source))?;
+  let (source_with_newline, original_endpoint) = ranges::with_newline(source);
+  let source_str = String::from_utf8(Vec::from(source_with_newline.as_ref()))?;
 
   parser.set_language(lang)?;
   let tree = parser
-    .parse(source, None)
+    .parse(&source_with_newline, None)
     .ok_or_else(|| anyhow::anyhow!("Parse returned None"))?;
 
   let mut injected_regions = Vec::new();
 
   let mut cursor = QueryCursor::new();
-  let mut matches = cursor.matches(query, tree.root_node(), source);
+  let mut matches = cursor.matches(query, tree.root_node(), source_with_newline.as_ref());
 
   let lang_capture_index = query.capture_index_for_name("injection.language");
   let Some(content_capture_index) = query.capture_index_for_name("injection.content") else {
@@ -157,7 +160,13 @@ pub fn query_injections(
     }
 
     let Some(lang_name) = harcoded_lang_name.or_else(|| {
-      lang_capture.and_then(|capture| capture.node.utf8_text(source).ok().map(String::from))
+      lang_capture.and_then(|capture| {
+        capture
+          .node
+          .utf8_text(&source_with_newline)
+          .ok()
+          .map(String::from)
+      })
     }) else {
       continue;
     };
@@ -177,7 +186,7 @@ pub fn query_injections(
 
     injected_regions.push(InjectedRegion {
       lang: lang_name.clone(),
-      range,
+      range: ranges::remap_range_for_appended_newline(range, &original_endpoint),
     });
   }
 

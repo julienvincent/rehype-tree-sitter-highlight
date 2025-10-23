@@ -1,7 +1,8 @@
 target
 dist
 node_modules
-fixtures
+fixtures/grammars
+fixtures/nvim-treesitter
 
 *.node
 
