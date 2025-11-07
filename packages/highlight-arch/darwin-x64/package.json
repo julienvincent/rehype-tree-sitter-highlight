@@ -1,6 +1,6 @@
 {
   "name": "@julienvincent/tree-sitter-highlight-darwin-x64",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "cpu": [
     "x64"
   ],

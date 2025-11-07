@@ -1,6 +1,6 @@
 {
   "name": "@julienvincent/tree-sitter-highlight-linux-arm64",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "cpu": [
     "arm64"
   ],
